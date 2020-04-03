@@ -9,6 +9,9 @@ struct result
     char* data;
 };
 
+double startTime;
+double endTime;
+
 bool Search(char MyChar[], char S[])
 {
     int i = 0,j,k;
@@ -48,11 +51,38 @@ bool Search(char MyChar[], char S[])
     return false;
 }
 
+
+//Line  Query.
+bool check(char str[], char Query2[])
+{
+    int l = strlen(Query2);
+    char Query[l];
+    strcpy(Query,Query2);
+
+    char delim[] = " ";
+    char *ptr = strtok(Query, delim);
+
+    while(ptr != NULL)
+    {
+        if(Search(str,ptr))
+        {
+            ptr = strtok(NULL, delim);
+        }
+        else
+            return false;
+    }
+    return true;
+}
+
+
+
 struct result readFile(char fileName[50],long offsit,char Query[])
 {
+    int i = 0;
     char *Result=(char *) malloc(sizeof(char)*5000);
+    Result[i]='\0';
     FILE *file ;
-    int sizeOfLine,i;
+    int sizeOfLine;
     char * data = (char *) malloc(sizeof(char)*300);
     file = fopen(fileName, "r") ;
 
@@ -70,7 +100,7 @@ struct result readFile(char fileName[50],long offsit,char Query[])
         for( i = 0; i < 30; i++)
         {
             fgets (data, 400, file);
-            if(Search(data,Query))
+            if(check(data,Query))
             {
                 // printf("%s",data);
                 r.counter++;
@@ -140,9 +170,11 @@ int main( int argc, char **argv )
 
     if(rank == 0)
     {
+        startTime = MPI_Wtime();
+        printf("\n\t\t\tSearch Engine Helper\n\n");
         arrofcount=(int *) malloc(sizeof(int)*(size-1));
         finalres=(char *) malloc(sizeof(char)*(size)*10000);
-        printf("enter your Query :");
+        printf("Enter your Query :\n");
         scanf("%[^\n]%*c", query);
         query_length = strlen(query);
         for(i=0; i<size-1; i++)
@@ -223,6 +255,9 @@ int main( int argc, char **argv )
 
         writeResultInFile("file.txt",all,count,query);
         //printf("%s\n", finalres);
+
+        endTime = MPI_Wtime();
+        printf("\nRunning Time = %f\n\n", endTime - startTime);
     }
 
 
