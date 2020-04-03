@@ -50,7 +50,7 @@ bool Search(char MyChar[], char S[])
 
 struct result readFile(char fileName[50],long offsit,char Query[])
 {
-    char *Result=(char *) malloc(sizeof(char)*4000);
+    char *Result=(char *) malloc(sizeof(char)*5000);
     FILE *file ;
     int sizeOfLine,i;
     char * data = (char *) malloc(sizeof(char)*300);
@@ -85,8 +85,8 @@ struct result readFile(char fileName[50],long offsit,char Query[])
 
 void writeResultInFile(char fileName[50], char finalResult[], int counter, char* qeury)
 {
-    FILE *file = fopen(fileName, "w");
 
+    FILE *file = fopen(fileName, "w");
 
     fprintf(file,"Query: %s \n",qeury);
 
@@ -110,11 +110,11 @@ struct result searchInFiles(int irecv,int numOfFiles,char arr[])
         strcat(filename,num);
         strcat(filename,".txt");
         //printf("\n%s", filename);
-
         struct result r= readFile(filename,0,arr);
         count+=r.counter;
         strcat(res, r.data);
     }
+
     //printf("\n\n%d\n",count);
     struct result finalres;
     finalres.counter=count;
@@ -130,6 +130,7 @@ int main( int argc, char **argv )
     char query[100];
     char *finalres;
     struct result r;
+
     MPI_Init( &argc, &argv );
     MPI_Comm_rank( MPI_COMM_WORLD, &rank );
     MPI_Comm_size( MPI_COMM_WORLD, &size );
@@ -194,6 +195,7 @@ int main( int argc, char **argv )
             /// if size = 5 the process 4 will run because the 50%(size-1)!=0 and it search in only 2 files because the 50%(size-1)=2
 
             r=searchInFiles( irecv, 50%(size-1),query);
+
         }
     }
     MPI_Gather(&r.counter, 1, MPI_INT, arrofcount, 1, MPI_INT, 0,MPI_COMM_WORLD);
@@ -208,8 +210,18 @@ int main( int argc, char **argv )
             count+=arrofcount[i];
         }
         printf("%d\n", count);
+        int x=0;
+        char*all=(char *) malloc(sizeof(char)*40000);
+        for(i=0; i<size*10000; i++)
+        {
+           if(finalres[i]!=NULL)
+           {
+               all[x]=finalres[i];
+               x++;
+           }
+        }
 
-        writeResultInFile("file.txt",finalres,count,query);
+        writeResultInFile("file.txt",all,count,query);
         //printf("%s\n", finalres);
     }
 
