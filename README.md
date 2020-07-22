@@ -31,3 +31,7 @@ Pseudo code of search steps applied for each file:
  
 For each Sentence in File:  Match = true; For each word in the query: IF word not in CurrentSentence: MatchScore = false;   IF MatchingScore is true:    Store Sentence;              ResultsFound += 1; 
  
+ ## Authors
+   * Fatma Ashraf - [fatmaashraframadan](https://github.com/fatmaashraframadan?tab=repositories)
+   * Mostafa Badr - [moustafaBadrr](https://github.com/moustafaBadrr)
+   * MinaFarid - [minafaried](https://github.com/minafaried)
